@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
-	"runtime"
 )
 
 func main() {
@@ -24,23 +22,13 @@ func main() {
 		return
 	}
 	hexstring := ""
-	filepatchshtype := "/"
-	if runtime.GOOS == "windows" {
-		filepatchshtype = "\\"
-	}
 
-	exfullpath, exerr := os.Executable()
-	if exerr != nil {
-		panic(any(exerr))
-	}
-
-	exPath := filepath.Dir(exfullpath)
-	_, err := os.Stat(exPath + filepatchshtype + *bname)
+	_, err := os.Stat(*bname)
 	if os.IsNotExist(err) {
 		fmt.Println("bin file not found")
 		return
 	}
-	f, fopenerr := os.Open(exPath + filepatchshtype + *bname)
+	f, fopenerr := os.Open(*bname)
 	if fopenerr != nil {
 		panic(any(fopenerr))
 	}
@@ -57,7 +45,7 @@ func main() {
 			hexstring += "\r\n"
 		}
 	}
-	fmt.Println("Write file:", exPath+filepatchshtype+*hfname)
+	fmt.Println("Write file:", *hfname)
 	werr := os.WriteFile(*hfname, []byte(hexstring), 0644)
 	if werr != nil {
 		panic(any(werr))
